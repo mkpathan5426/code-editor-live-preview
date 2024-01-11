@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Code Playground</title>
+    <style>
+        * {
+            margin: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        #editor {
+            flex: 1;
+            height: 50vh;
+            /* width: 100vw; */
+        }
+
+        #output {
+            flex: 1;
+            height: 50vh;
+            background-color: #f0f0f0;
+            padding: 10px;
+            overflow: auto;
+            /* width: 100vw; */
+            }
+
+        @media (max-width: 1250px) {
+            #editor,
+            #output {
+                flex: initial; /* Reset flex to its initial value for both sections */
+                height: auto; /* Reset height to auto for both sections */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="editor"></div>
+    <div id="output"></div>
+
+    <script src="https://unpkg.com/monaco-editor@0.25.2/min/vs/loader.js"></script>
+    <script>
+        require.config({
+            paths: {
+                'vs': 'https://unpkg.com/monaco-editor@0.25.2/min/vs'
+            }
+        });
+        require(['vs/editor/editor.main'], function () {
+            // Default HTML boilerplate
+            const defaultHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>`;
+
+            // Monaco Editor setup
+            const editor = monaco.editor.create(document.getElementById('editor'), {
+                value: defaultHtml,
+                language: 'html',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                fontSize: 16,
+                suggest: {
+                    triggerCharacters: ['.', '<', '"', "'", '/']
+                },
+                wordBasedSuggestions: true,
+            });
+
+            const outputContainer = document.getElementById('output');
+
+            function updateOutput() {
+                const htmlCode = editor.getValue();
+                const iframe = document.createElement('iframe');
+                iframe.srcdoc = htmlCode;
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+
+                outputContainer.innerHTML = '';
+                outputContainer.appendChild(iframe);
+            }
+
+            editor.onDidChangeModelContent(updateOutput);
+
+            // Initial update
+            updateOutput();
+        });
+    </script>
+</body>
+
+</html>
